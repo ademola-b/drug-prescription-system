@@ -57,6 +57,10 @@ SITE_ID = 1
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'accounts.serializers.CustomRegisterSerializer'
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -138,6 +142,8 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [STATIC_DIR,]
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+ACCOUNT_EMAIL_VERIFICATION = "none"
 
 
 # Default primary key field type
