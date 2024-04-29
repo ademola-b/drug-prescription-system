@@ -73,7 +73,7 @@ class Login extends StatelessWidget {
                             width: MediaQuery.of(context).size.width,
                             child: Obx(() => DefaultButton(
                                   onPressed: () {
-                                    // controller.isClicked.value = true;
+                                    controller.isClicked.value = true;
                                   },
                                   textSize: 18,
                                   child: Constants.loadingCirc(
@@ -88,14 +88,14 @@ class Login extends StatelessWidget {
                     onTap: () => Get.toNamed('/register'),
                     child: RichText(
                         text: const TextSpan(
-                            text: "Having trouble logging in? ",
+                            text: "Don't have an account? ",
                             style: TextStyle(
-                                fontFamily: 'Poppins',
+                                fontFamily: 'Montserrat',
                                 color: Colors.black87,
                                 fontSize: 18),
                             children: [
                           TextSpan(
-                            text: "Contact Admin",
+                            text: "Create One",
                             style: TextStyle(
                                 color: Constants.primaryColor,
                                 fontWeight: FontWeight.bold),

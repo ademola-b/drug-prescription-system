@@ -21,6 +21,7 @@ class Prescribo extends StatelessWidget {
       getPages: [
         GetPage(name: "/", page: ()=> SplashScreen()),
         GetPage(name: "/login", page: ()=> Login()),
+        GetPage(name: "/register", page: ()=> Login()),
       ],
     );
   }
