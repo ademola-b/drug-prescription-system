@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:prescribo/controller/login_controller.dart';
+import 'package:prescribo/services/remote_services.dart';
 import 'package:prescribo/utils/constants.dart';
 import 'package:prescribo/utils/defaultButton.dart';
 import 'package:prescribo/utils/defaultText.dart';
@@ -10,6 +11,19 @@ import 'package:prescribo/utils/defaultTextFormField.dart';
 class Login extends StatelessWidget {
   final _formkey = GlobalKey<FormState>();
   final controller = Get.put(LoginController());
+
+  _login() async {
+    var isValid = _formkey.currentState!.validate();
+    if (!isValid) return;
+    _formkey.currentState!.save();
+    controller.isClicked.value = true;
+
+    await RemoteServices.login(
+        controller.username.value, controller.password.value);
+
+    controller.isClicked.value = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -73,7 +87,7 @@ class Login extends StatelessWidget {
                           width: MediaQuery.of(context).size.width,
                           child: Obx(() => DefaultButton(
                                 onPressed: () {
-                                  controller.isClicked.value = true;
+                                  _login();
                                 },
                                 textSize: 18,
                                 child: Constants.loadingCirc(
@@ -82,7 +96,6 @@ class Login extends StatelessWidget {
                               )))
                     ],
                   ),
-                
                 ),
                 const SizedBox(height: 30),
                 Center(

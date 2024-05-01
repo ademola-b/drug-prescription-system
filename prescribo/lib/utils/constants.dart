@@ -71,4 +71,31 @@ class Constants {
       }
     });
   }
+
+  static dialogBox(context,
+      {String? text,
+      Color? color,
+      Color? textColor,
+      Widget? icon,
+      List<Widget>? actions,
+      bool barrier = false,
+      Widget? content}) {
+    return showDialog(
+        barrierDismissible: barrier,
+        context: context,
+        builder: (context) => AlertDialog(
+              backgroundColor: color,
+              content: SizedBox(
+                height: 150.0,
+                child: Column(
+                  children: [
+                    if (icon != null) icon,
+                    const SizedBox(height: 10.0),
+                    if (content != null) content,
+                  ],
+                ),
+              ),
+              actions: actions,
+            ));
+  }
 }

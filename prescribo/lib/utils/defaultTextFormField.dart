@@ -69,10 +69,9 @@ class _DefaultTextFormFieldState extends State<DefaultTextFormField> {
         focusedBorder: const UnderlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(15.0)),
             borderSide: BorderSide(color: Colors.white)),
-
         fillColor: widget.fillColor,
         filled: true,
-        label: DefaultText(size: 18.0, text: "${widget.label}"),
+        label: DefaultText(size: 15.0, text: "${widget.label}"),
         labelStyle: const TextStyle(color: Constants.primaryColor),
         iconColor: Constants.primaryColor,
         prefixIcon: Icon(widget.icon),

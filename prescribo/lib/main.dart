@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:prescribo/screens/dashboard.dart';
 import 'package:prescribo/screens/login.dart';
+import 'package:prescribo/screens/prescribe_drug.dart';
 import 'package:prescribo/screens/register.dart';
 import 'package:prescribo/screens/splash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +30,8 @@ class Prescribo extends StatelessWidget {
         GetPage(name: "/", page: () => SplashScreen()),
         GetPage(name: "/login", page: () => Login()),
         GetPage(name: "/register", page: () => Register()),
-        GetPage(name: "/register", page: () => Register()),
+        GetPage(name: "/dashboard", page: () => Dashboard()),
+        GetPage(name: "/prescribeDrug", page: () => PrescribeDrug()),
       ],
     );
   }

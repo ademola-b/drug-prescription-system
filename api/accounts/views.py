@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import generics, status
 
 from . models import CustomUser
-from . serializers import CustomRegisterSerializer, UserUpdateSerializer
+from . serializers import CustomRegisterSerializer, UserUpdateSerializer, UserDetailsSerializer
 # Create your views here.
 class CustomRegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
@@ -22,3 +22,19 @@ class UpdateUserView(generics.UpdateAPIView):
 
     def get_object(self):
         return self.request.user
+    
+class RetrieveUserDetail(generics.RetrieveAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserDetailsSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, *args, **kwargs):
+        username = self.kwargs.get('username')
+        try:
+            user = CustomUser.objects.get(username=username)
+            serializer = self.get_serializer(user)
+            return Response(serializer.data)
+        except:
+            return Response({"error": "Not Record found"}, status=status.HTTP_404_NOT_FOUND)
+        
+

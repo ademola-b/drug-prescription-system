@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
+import 'package:prescribo/controller/login_controller.dart';
 import 'package:prescribo/controller/registration_controller.dart';
 import 'package:prescribo/main.dart';
+import 'package:prescribo/models/login_response.dart';
 import 'package:prescribo/models/register_response.dart';
 import 'package:http/http.dart' as http;
+import 'package:prescribo/models/user_details.dart';
 import 'package:prescribo/services/urls.dart';
 import 'package:prescribo/utils/constants.dart';
 
@@ -46,6 +49,58 @@ class RemoteServices {
       Get.put(RegistrationController()).isClicked.value = false;
       Get.showSnackbar(Constants.customSnackBar(tag: false, message: "$e"));
     }
+    return null;
+  }
+
+  static Future<UserDetailResponse?> userDetails({String? username}) async {
+    try {
+      http.Response response;
+      if (username != null) {
+        response = await http.get(Uri.parse("$baseUrl/auth/user/$username/"),
+            headers: {
+              'Authorization': "Token ${sharedPreferences.getString('token')}"
+            });
+      } else {
+        response = await http.get(userUri, headers: {
+          'Authorization': "Token ${sharedPreferences.getString('token')}"
+        });
+      }
+      if (response.statusCode == 200) {
+        print(response.body);
+        return userDetailResponseFromJson(response.body);
+      } else {
+        print(response.reasonPhrase);
+        throw Exception("${response.reasonPhrase}");
+      }
+    } catch (e) {
+      Get.showSnackbar(Constants.customSnackBar(
+          message: "An error occurred: $e", tag: false));
+    }
+    return null;
+  }
+
+  static Future<LoginResponse?> login(
+      String? username, String? password) async {
+    try {
+      http.Response response = await http
+          .post(loginUri, body: {"username": username, "password": password});
+      var responseData = jsonDecode(response.body);
+      if (responseData != null) {
+        if (responseData['key'] != null) {
+          sharedPreferences.setString('token', responseData['key']);
+
+          Get.offAllNamed('/dashboard');
+        } else if (responseData['non_field_errors'] != null) {
+          Get.put(LoginController()).isClicked.value = false;
+          Constants.printValues(responseData);
+        }
+      }
+    } catch (e) {
+      Get.put(LoginController()).isClicked.value = false;
+      Get.showSnackbar(Constants.customSnackBar(
+          message: "An error occurred: $e", tag: false));
+    }
+
     return null;
   }
 }

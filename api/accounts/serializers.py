@@ -91,10 +91,6 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             'dob'
         ]
 
-    # def validate_phone(self, value):
-    #     if len(value) > 15:
-    #         raise serializers.ValidationError({"phone": "Phone cannot be more than 15digits"})
-    #     return value
 
     def update(self, instance, validated_data):
         for key, value in validated_data.items():
