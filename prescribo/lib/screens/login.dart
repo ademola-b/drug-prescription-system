@@ -36,52 +36,54 @@ class Login extends StatelessWidget {
                 ),
                 const SizedBox(height: 30),
                 Form(
-                    key: _formkey,
-                    child: Column(
-                      children: [
-                        DefaultTextFormField(
-                          obscureText: false,
-                          label: "Username",
-                          icon: Icons.person,
-                          fillColor: Colors.white,
-                          validator: Constants.validator,
-                          onSaved: (newValue) =>
-                              controller.username.value = newValue!,
-                          keyboardInputType: TextInputType.text,
-                          // maxLines: 1,
-                        ),
-                        const SizedBox(height: 20),
-                        Obx(() => DefaultTextFormField(
-                              obscureText: controller.passwordHidden.value,
-                              label: "Password",
-                              icon: Icons.lock,
-                              maxLines: 1,
-                              fillColor: Colors.white,
-                              validator: Constants.validator,
-                              onSaved: (newValue) =>
-                                  controller.password.value = newValue!,
-                              suffixIcon: GestureDetector(
-                                onTap: () => controller.passwordHidden.value =
-                                    !controller.passwordHidden.value,
-                                child: Icon(controller.passwordHidden.value
-                                    ? Icons.visibility
-                                    : Icons.visibility_off),
-                              ),
-                            )),
-                        const SizedBox(height: 40),
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: Obx(() => DefaultButton(
-                                  onPressed: () {
-                                    controller.isClicked.value = true;
-                                  },
-                                  textSize: 18,
-                                  child: Constants.loadingCirc(
-                                      "Login", controller.isClicked.value),
-                                  // text: "Login",
-                                )))
-                      ],
-                    )),
+                  key: _formkey,
+                  child: Column(
+                    children: [
+                      DefaultTextFormField(
+                        obscureText: false,
+                        label: "Username",
+                        icon: Icons.person,
+                        fillColor: Colors.white,
+                        validator: Constants.validator,
+                        onSaved: (newValue) =>
+                            controller.username.value = newValue!,
+                        keyboardInputType: TextInputType.text,
+                        // maxLines: 1,
+                      ),
+                      const SizedBox(height: 20),
+                      Obx(() => DefaultTextFormField(
+                            obscureText: controller.passwordHidden.value,
+                            label: "Password",
+                            icon: Icons.lock,
+                            maxLines: 1,
+                            fillColor: Colors.white,
+                            validator: Constants.validator,
+                            onSaved: (newValue) =>
+                                controller.password.value = newValue!,
+                            suffixIcon: GestureDetector(
+                              onTap: () => controller.passwordHidden.value =
+                                  !controller.passwordHidden.value,
+                              child: Icon(controller.passwordHidden.value
+                                  ? Icons.visibility
+                                  : Icons.visibility_off),
+                            ),
+                          )),
+                      const SizedBox(height: 40),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: Obx(() => DefaultButton(
+                                onPressed: () {
+                                  controller.isClicked.value = true;
+                                },
+                                textSize: 18,
+                                child: Constants.loadingCirc(
+                                    "Login", controller.isClicked.value),
+                                // text: "Login",
+                              )))
+                    ],
+                  ),
+                
+                ),
                 const SizedBox(height: 30),
                 Center(
                   child: InkWell(

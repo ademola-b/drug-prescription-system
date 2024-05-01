@@ -1,8 +1,11 @@
+import base64
 from django.contrib.auth import get_user_model
+from django.core.files.storage import default_storage
 import django.contrib.auth.password_validation as validators
 from django.core import exceptions
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+from dj_rest_auth.serializers import (UserDetailsSerializer)
 from . models import CustomUser
 
 
@@ -50,3 +53,51 @@ class CustomRegisterSerializer(serializers.ModelSerializer):
 
         user.save()
         return user
+
+
+class UserDetailsSerializer(UserDetailsSerializer):
+
+    image_mem = serializers.SerializerMethodField("image_memory")
+
+    class Meta(UserDetailsSerializer.Meta):
+        fields = [
+            'pk',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'user_type',
+            'phone',
+            'gender',
+            'address',
+            'dob',
+            'image_mem',
+        ]
+    
+    def image_memory(request, model:CustomUser):
+        if model.image.name is not None:
+            with default_storage.open(model.image.name, 'rb') as loadedfile:
+                return base64.b64encode(loadedfile.read())
+        
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = [
+            'first_name',
+            'last_name',
+            'phone',
+            'gender',
+            'address',
+            'dob'
+        ]
+
+    # def validate_phone(self, value):
+    #     if len(value) > 15:
+    #         raise serializers.ValidationError({"phone": "Phone cannot be more than 15digits"})
+    #     return value
+
+    def update(self, instance, validated_data):
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        instance.save()
+        return instance

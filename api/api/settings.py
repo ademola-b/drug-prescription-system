@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-&q+m_4$$y2(0__3qh7d9w_$4b%(o^ryct*ltt8)mhl^6k3(fd8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.186.182']
 
 
 # Application definition
@@ -56,6 +56,19 @@ INSTALLED_APPS = [
 SITE_ID = 1
 
 AUTH_USER_MODEL = "accounts.CustomUser"
+
+REST_AUTH = {
+    'USER_DETAILS_SERIALIZER': 'accounts.serializers.UserDetailsSerializer',
+}
+
+
+REST_FRAMEWORK = {
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
 
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'accounts.serializers.CustomRegisterSerializer'

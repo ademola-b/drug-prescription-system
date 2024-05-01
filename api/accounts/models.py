@@ -12,8 +12,8 @@ class CustomUser(AbstractUser):
                             #    validators= [UniqueValidator(queryset=get_user_model().objects.all(), message="A user with that email already exists.")] ,
                              )
     phone = models.CharField(max_length=15)
-    image = models.ImageField(upload_to='images/', default='images/default.jpg')
-    user_type = models.CharField(max_length=10, default='club', choices = [
+    image = models.ImageField(upload_to='images/', default='default.jpg')
+    user_type = models.CharField(max_length=10, default='patient', choices = [
             ('patient', 'patient'),
             ('doctor', 'doctor'),
             ('pharmacist', 'pharmacist')

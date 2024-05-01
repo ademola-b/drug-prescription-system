@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 import 'package:prescribo/utils/defaultText.dart';
 
-
-class Constants{
+class Constants {
   static const Color primaryColor = Color(0xFF5A81FA);
   static const Color altColor = Color(0xFFCDDEFF);
   static const Color backgroundColor = Color(0xFFF2F5FF);
@@ -27,4 +28,47 @@ class Constants{
     return null;
   }
 
+  static customSnackBar({String? title, String? message, required bool tag}) {
+    return GetSnackBar(
+        title: title,
+        // message: message,
+        messageText: DefaultText(
+          text: message,
+          color: Colors.white,
+        ),
+        backgroundColor: tag ? Colors.green : Colors.red,
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(seconds: 3),
+        snackStyle: SnackStyle.FLOATING,
+        margin: const EdgeInsets.all(20.0),
+        borderRadius: 10);
+  }
+
+  static printValues(dynamic responseData) {
+    responseData.forEach((key, value) {
+      if (value is List) {
+        // If the value is a list, join its elements into a single string
+        var joinedValue = value.join(', ');
+        Get.showSnackbar(Constants.customSnackBar(
+            tag: false, message: "$key: $joinedValue"));
+      } else if (value is Map<String, dynamic>) {
+        value.forEach((key, innerValue) {
+          if (innerValue is Iterable) {
+            // If the inner value is an iterable (like a list), join its elements into a single string
+            var joinedValue = innerValue.join(', ');
+            Get.showSnackbar(Constants.customSnackBar(
+                tag: false, message: "$key: $joinedValue"));
+          } else {
+            Get.showSnackbar(Constants.customSnackBar(
+                tag: false, message: "$key: $innerValue"));
+          }
+        });
+      } else {
+        responseData.forEach((key, value) {
+          Get.showSnackbar(
+              Constants.customSnackBar(tag: false, message: "$key: $value"));
+        });
+      }
+    });
+  }
 }
