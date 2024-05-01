@@ -1,12 +1,12 @@
 import 'package:get/get.dart';
 
 class PrescribeController extends GetxController {
-  final data = Get.arguments;
+  RxString diagnosis = ''.obs;
+  RxString qty = ''.obs;
 
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    print("data:${data}");
   }
 }

@@ -99,11 +99,13 @@ class DoctorWidget extends StatelessWidget {
                                   onPressed: () {
                                     _viewDetail();
                                   },
-                                  child: const DefaultText(text: "View Detail"))
+                                  child:
+                                      const DefaultText(text: "View Detail")),
+                              DefaultText(text: "${controller.noUser.value}")
                             ],
                           ),
                         ));
-                    // Get.toNamed('/prescription');
+                    // Get.toNamed('/prescription');)
                   },
                 ),
               ],

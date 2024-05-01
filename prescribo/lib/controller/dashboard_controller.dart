@@ -29,7 +29,7 @@ class DashboardController extends GetxController {
 
     if (user != null) {
       Get.close(1);
-      Get.toNamed("/prescribeDrug", arguments: {'user': user});
+      Get.toNamed("/viewPatientDetail", arguments: {'user': user});
     } else {
       noUser.value = "User Not Found";
     }
