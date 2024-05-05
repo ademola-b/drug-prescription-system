@@ -4,10 +4,12 @@ import 'package:get/get.dart';
 import 'package:prescribo/controller/login_controller.dart';
 import 'package:prescribo/controller/registration_controller.dart';
 import 'package:prescribo/main.dart';
+import 'package:prescribo/models/drugs_response.dart';
 import 'package:prescribo/models/login_response.dart';
 import 'package:prescribo/models/register_response.dart';
 import 'package:http/http.dart' as http;
 import 'package:prescribo/models/user_details.dart';
+import 'package:prescribo/models/user_update.dart';
 import 'package:prescribo/services/urls.dart';
 import 'package:prescribo/utils/constants.dart';
 
@@ -32,17 +34,55 @@ class RemoteServices {
           'content-type': 'application/json; charset=UTF-8',
         },
       );
-      Map<String, dynamic> responseData = jsonDecode(response.body);
+      var responseData = jsonDecode(response.body);
       print(responseData);
       if (response.statusCode == 201) {
         Get.showSnackbar(Constants.customSnackBar(
             tag: true, message: "Account Successfully Created"));
 
-        Get.toNamed("/login");
+        Get.toNamed("/updateProf");
       } else {
         Get.put(RegistrationController()).isClicked.value = false;
         Constants.printValues(responseData);
         // throw Exception("Error: ${response.reasonPhrase}");
+      }
+    } catch (e) {
+      print(e);
+      Get.put(RegistrationController()).isClicked.value = false;
+      Get.showSnackbar(Constants.customSnackBar(tag: false, message: "$e"));
+    }
+    return null;
+  }
+
+  static Future<UserUpdateResponse?> updateDetails(
+      String? firstName,
+      String? lastName,
+      String? phone,
+      String? gender,
+      String? address,
+      String? dob) async {
+    try {
+      http.Response response = await http.put(userUpdateUri,
+          body: jsonEncode({
+            "first_name": firstName,
+            "last_name": lastName,
+            "phone": phone,
+            "gender": gender,
+            "address": address,
+            "dob": dob
+          }),
+          headers: {
+            'content-type': 'application/json; charset=UTF-8',
+            'Authorization': "Token ${sharedPreferences.getString('token')}"
+          });
+      var responseData = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        Get.showSnackbar(Constants.customSnackBar(
+            tag: true, message: "Bio updated, Login now"));
+        Get.offAllNamed("/login");
+      } else {
+        Get.put(RegistrationController()).isClicked.value = false;
+        Constants.printValues(responseData);
       }
     } catch (e) {
       print(e);
@@ -102,5 +142,21 @@ class RemoteServices {
     }
 
     return null;
+  }
+
+  static Future<List<DrugsResponse>?>? drugList() async {
+    try {
+      http.Response response = await http.get(drugsUri, headers: {
+        'Authorization': "Token ${sharedPreferences.getString('token')}"
+      });
+      if (response.statusCode == 200) {
+        return drugsResponseFromJson(response.body);
+      } else {
+        throw Exception("Failed to get medicine");
+      }
+    } catch (e) {
+      Get.showSnackbar(
+          Constants.customSnackBar(message: "Server Error: $e", tag: false));
+    }
   }
 }

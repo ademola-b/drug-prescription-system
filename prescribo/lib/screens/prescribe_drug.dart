@@ -2,8 +2,10 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prescribo/controller/prescribe_controller.dart';
+import 'package:prescribo/models/drugs_response.dart';
 import 'package:prescribo/models/user_details.dart';
 import 'package:prescribo/utils/constants.dart';
+import 'package:prescribo/utils/defaultButton.dart';
 import 'package:prescribo/utils/defaultText.dart';
 import 'package:prescribo/utils/defaultTextFormField.dart';
 
@@ -13,9 +15,16 @@ class PrescribeDrug extends StatelessWidget {
   final _form = GlobalKey<FormState>();
   final controller = Get.put(PrescribeController());
 
+  removeDrug(int index, var removedItem, var drugId) {
+    controller.drugList.removeAt(index);
+
+    controller.drugPrescribed
+        .removeWhere((element) => element['drug'] == drugId);
+  }
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: const DefaultText(text: "Prescribe"),
@@ -30,7 +39,6 @@ class PrescribeDrug extends StatelessWidget {
                 key: _form,
                 child: Column(
                   children: [
-                    
                     DefaultTextFormField(
                       // text: controller.diagnosis.value,
                       obscureText: false,
@@ -38,14 +46,14 @@ class PrescribeDrug extends StatelessWidget {
                       label: "Diagnosis",
                       validator: Constants.validator,
                       fillColor: Colors.white,
-                      onSaved: (newValue) => controller.diagnosis.value = newValue!,
+                      onSaved: (newValue) =>
+                          controller.diagnosis.value = newValue!,
                     ),
                     const SizedBox(height: 20.0),
-                    
-                    DropdownSearch<UserDetailResponse>(
+                    DropdownSearch<DrugsResponse>(
                       mode: Mode.MENU,
-                      items: controller.medicines,
-                      itemAsString: (MedicineResponse? med) => med!.name!,
+                      items: controller.drugs,
+                      itemAsString: (DrugsResponse? drug) => drug!.name!,
                       showSearchBox: true,
                       dropdownSearchDecoration: const InputDecoration(
                           labelText: "Medicine",
@@ -56,11 +64,11 @@ class PrescribeDrug extends StatelessWidget {
                                   BorderRadius.all(Radius.circular(15.0)),
                               borderSide: BorderSide(color: Colors.white))),
                       onChanged: (value) {
-                        controller.medicine!.value = value!.name!;
+                        controller.drug!.value = value!.name!;
                         controller.price!.value = value.price!;
-                        controller.medicineId!.value = value.medicineId!;
+                        controller.drugId!.value = value.drugId!;
                       },
-                      validator: Constants.medicineValidator,
+                      validator: Constants.drugValidator,
                     ),
                     const SizedBox(height: 20.0),
                     Row(
@@ -68,26 +76,27 @@ class PrescribeDrug extends StatelessWidget {
                       children: [
                         Expanded(
                             child: DefaultTextFormField(
-                          // text: controller.qty.value,
+                          text: controller.qtyTxt.value,
                           label: "Quantity",
                           obscureText: false,
                           icon: Icons.date_range_outlined,
                           fillColor: Colors.white,
                           maxLines: 1,
                           keyboardInputType: TextInputType.number,
-                          onSaved: (value) => controller.qty.value = value!,
+                          onSaved: (value) => controller.qty!.value = value!,
                         )),
                         const SizedBox(width: 10.0),
                         Expanded(
                           child: DefaultTextFormField(
-                            text: controller.dosage.value,
+                            text: controller.dosageTxt.value,
                             label: "Dosage",
                             obscureText: false,
                             icon: Icons.date_range_outlined,
                             fillColor: Colors.white,
                             maxLines: 1,
                             keyboardInputType: TextInputType.number,
-                            onSaved: (value) => _dosage = value!,
+                            onSaved: (value) =>
+                                controller.dosage!.value = value!,
                           ),
                         ),
                       ],
@@ -260,10 +269,10 @@ class PrescribeDrug extends StatelessWidget {
 
                               _form.currentState!.save();
                               controller.isClicked.value = true;
-                              controller.makePayment(context);
                             },
                             textSize: 18,
-                            child: controller.cir(),
+                            child: Constants.loadingCirc(
+                                    "Prescribe", controller.isClicked.value),
                           )),
                     )
                   ],

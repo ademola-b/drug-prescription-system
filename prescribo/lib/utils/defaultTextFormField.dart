@@ -19,6 +19,7 @@ class DefaultTextFormField extends StatefulWidget {
   final keyboardInputType;
   final Function()? onTap;
   final double borderRadius;
+  // final TextEditingController? controller;
 
   const DefaultTextFormField(
       {Key? key,
@@ -26,6 +27,7 @@ class DefaultTextFormField extends StatefulWidget {
       this.text,
       this.icon,
       this.suffixIcon,
+      // this.controller,
       // required this.onSaved,
       this.validator,
       this.keyboardInputType,

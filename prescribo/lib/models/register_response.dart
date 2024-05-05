@@ -14,7 +14,7 @@ class RegisterResponse {
   final String? username;
   final List<String>? email;
   final List<String>? password1;
-  final List<String>? password2;
+  final String? password2;
   // final List<String>? username;
   // final List<String>? email;
   // final List<String>? password1;
@@ -37,9 +37,10 @@ class RegisterResponse {
         password1: json["password1"] == null
             ? []
             : List<String>.from(json["password1"]!.map((x) => x)),
-        password2: json["password2"] == null
-            ? []
-            : List<String>.from(json["password2"]!.map((x) => x)),
+        password2: json["password2"],
+        // password2: json["password2"] == null
+        //     ? []
+        //     : List<String>.from(json["password2"]!.map((x) => x)),
       );
 
   Map<String, dynamic> toJson() => {
@@ -49,8 +50,8 @@ class RegisterResponse {
         "password1": password1 == null
             ? []
             : List<dynamic>.from(password1!.map((x) => x)),
-        "password2": password2 == null
-            ? []
-            : List<dynamic>.from(password2!.map((x) => x)),
+        // "password2": password2 == null
+        //     ? []
+        //     : List<dynamic>.from(password2!.map((x) => x)),
       };
 }

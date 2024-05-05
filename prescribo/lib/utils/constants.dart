@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/snackbar/snackbar.dart';
+import 'package:prescribo/models/drugs_response.dart';
 import 'package:prescribo/utils/defaultText.dart';
+import 'package:intl/intl.dart';
+
 
 class Constants {
   static const Color primaryColor = Color(0xFF5A81FA);
@@ -23,6 +26,13 @@ class Constants {
 
   static String? validator(String? value) {
     if (value == null || value.isEmpty) {
+      return "Field is required";
+    }
+    return null;
+  }
+
+  static String? drugValidator(DrugsResponse? value) {
+    if (value == null) {
       return "Field is required";
     }
     return null;
@@ -98,4 +108,6 @@ class Constants {
               actions: actions,
             ));
   }
+
+  
 }
