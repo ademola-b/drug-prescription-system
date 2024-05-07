@@ -76,9 +76,15 @@ class UserDetailsSerializer(UserDetailsSerializer):
                 return base64.b64encode(loadedfile.read())
             
 class PatientSerializer(serializers.ModelSerializer):
+    user = UserDetailsSerializer()
     class Meta:
         model = Patient
-        fields = "__all__"
+        fields = [
+            "user",
+            "address",
+            "dob",
+            "phone"
+        ]
 
 class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:

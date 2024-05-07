@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import generics, status
@@ -37,18 +38,14 @@ class RetrievePatientDetail(generics.RetrieveAPIView):
     serializer_class = PatientSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
+    def get_object(self):
         user = self.request.user
         try:
+            # try to retrieve the patient associated with the current user
             return Patient.objects.get(user=user)
-        except:
-            return Patient.objects.none()
-
-    def get_object(self):
-        try:
-            return self.request.user
-        except:
-            return None
+        except Patient.DoesNotExist:
+            # If the patient does not exist, raise a NotFound exception
+            raise NotFound("Patient details not found")
     
 class RetrieveUserDetail(generics.RetrieveAPIView):
     queryset = CustomUser.objects.all()
