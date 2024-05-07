@@ -42,7 +42,7 @@ class _DefaultDropDownState extends State<DefaultDropDown> {
             borderRadius: BorderRadius.all(Radius.circular(15.0)),
             borderSide: BorderSide(color: Constants.primaryColor, width: 1.0)),
         filled: true,
-        fillColor: Constants.primaryColor,
+        fillColor: Constants.altColor,
         contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 3.0),
       ),
       hint: DefaultText(

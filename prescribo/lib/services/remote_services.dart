@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
+import 'package:prescribo/controller/dashboard_controller.dart';
 import 'package:prescribo/controller/login_controller.dart';
 import 'package:prescribo/controller/registration_controller.dart';
 import 'package:prescribo/main.dart';
 import 'package:prescribo/models/drugs_response.dart';
 import 'package:prescribo/models/login_response.dart';
+import 'package:prescribo/models/patient_response.dart';
 import 'package:prescribo/models/register_response.dart';
 import 'package:http/http.dart' as http;
 import 'package:prescribo/models/user_details.dart';
@@ -77,8 +79,8 @@ class RemoteServices {
       var responseData = jsonDecode(response.body);
       if (response.statusCode == 200) {
         Get.showSnackbar(Constants.customSnackBar(
-            tag: true, message: "Bio updated, Login now"));
-        Get.offAllNamed("/login");
+            tag: true, message: "Bio successfully updated"));
+        Get.offAllNamed("/dashboard");
       } else {
         Get.put(RegistrationController()).isClicked.value = false;
         Constants.printValues(responseData);
@@ -110,6 +112,31 @@ class RemoteServices {
       } else {
         print(response.reasonPhrase);
         throw Exception("${response.reasonPhrase}");
+      }
+    } catch (e) {
+      Get.showSnackbar(Constants.customSnackBar(
+          message: "An error occurred: $e", tag: false));
+    }
+    return null;
+  }
+
+  static Future<PatientResponse?> patientDetail() async {
+    try {
+      http.Response response;
+
+      response = await http.get(patientUri, headers: {
+        'Authorization': "Token ${sharedPreferences.getString('token')}"
+      });
+
+      if (response.statusCode == 200) {
+        print("patient: ${response.body}");
+        return patientResponseFromJson(response.body);
+      } else {
+        var responseData = jsonDecode(response.body);
+        // print(responseData);
+        if (responseData['detail'] != null) {
+          return patientResponseFromJson(response.body);
+        }
       }
     } catch (e) {
       Get.showSnackbar(Constants.customSnackBar(
