@@ -64,8 +64,7 @@ class RemoteServices {
     try {
       http.Response response = await http.put(userUpdateUri,
           body: jsonEncode({
-            "first_name": firstName,
-            "last_name": lastName,
+            "user": {"last_name": lastName, "first_name": firstName},
             "phone": phone,
             "gender": gender,
             "address": address,

@@ -4,9 +4,9 @@ from rest_framework.response import Response
 from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
 
-
 from . models import CustomUser, Patient
-from . serializers import CustomRegisterSerializer, PatientUpdateSerializer, UserDetailsSerializer
+from . serializers import (CustomRegisterSerializer, PatientSerializer,
+                           PatientUpdateSerializer, UserDetailsSerializer)
 # Create your views here.
 class CustomRegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
@@ -31,6 +31,24 @@ class UpdateUserView(generics.UpdateAPIView):
             user = self.request.user
             patient = Patient.objects.create(user=user)
             return patient
+        
+class RetrievePatientDetail(generics.RetrieveAPIView):
+    queryset = Patient.objects.all()
+    serializer_class = PatientSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        try:
+            return Patient.objects.get(user=user)
+        except:
+            return Patient.objects.none()
+
+    def get_object(self):
+        try:
+            return self.request.user
+        except:
+            return None
     
 class RetrieveUserDetail(generics.RetrieveAPIView):
     queryset = CustomUser.objects.all()

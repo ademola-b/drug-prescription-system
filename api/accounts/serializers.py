@@ -75,6 +75,11 @@ class UserDetailsSerializer(UserDetailsSerializer):
             with default_storage.open(model.image.name, 'rb') as loadedfile:
                 return base64.b64encode(loadedfile.read())
             
+class PatientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Patient
+        fields = "__all__"
+
 class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
