@@ -89,11 +89,19 @@ class DoctorWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
+                // DefaultGesture(
+                //   svgAsset: "assets/images/illness.svg",
+                //   tag: "Patients",
+                //   func: () {
+                //     Get.toNamed('/patients');
+                //   },
+                // ),
                 DefaultGesture(
-                  svgAsset: "assets/images/illness.svg",
-                  tag: "Patients",
+                  svgAsset: "assets/images/pill.svg",
+                  tag: "Drugs",
                   func: () {
-                    Get.toNamed('/patients');
+                    Get.toNamed('/drugs',
+                        arguments: {'userType': controller.userType.value});
                   },
                 ),
                 DefaultGesture(
@@ -114,7 +122,7 @@ class DoctorWidget extends StatelessWidget {
                                   },
                                   child:
                                       const DefaultText(text: "View Detail")),
-                              DefaultText(text: "${controller.noUser.value}")
+                              DefaultText(text: controller.noUser.value)
                             ],
                           ),
                         ));
@@ -127,13 +135,6 @@ class DoctorWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                DefaultGesture(
-                  svgAsset: "assets/images/pill.svg",
-                  tag: "Medicine",
-                  func: () {
-                    Get.toNamed('/medicine');
-                  },
-                ),
                 DefaultGesture(
                   svgAsset: "assets/images/treatment_list.svg",
                   tag: "Reports",
@@ -165,7 +166,7 @@ class DoctorWidget extends StatelessWidget {
                   },
                   child: const DefaultText(
                     color: Constants.primaryColor,
-                    text: "Scan Receipt",
+                    text: "Scan Prescription",
                     size: 18,
                   ),
                 ),

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 import 'package:prescribo/models/drugs_response.dart';
+import 'package:prescribo/utils/defaultButton.dart';
 import 'package:prescribo/utils/defaultText.dart';
 import 'package:intl/intl.dart';
-
+import 'package:prescribo/utils/defaultTextFormField.dart';
 
 class Constants {
   static const Color primaryColor = Color(0xFF5A81FA);
@@ -109,5 +110,84 @@ class Constants {
             ));
   }
 
-  
+  static void showDrugDetails(Size size, String medicineId, String nameText,
+      String priceText, BuildContext context) {
+    final _form = GlobalKey<FormState>();
+    late String _name, _price;
+
+    TextEditingController name = TextEditingController(text: nameText);
+    TextEditingController price = TextEditingController(text: priceText);
+
+    updateDrug(String id) async {
+      var isValid = _form.currentState!.validate();
+      if (!isValid) return;
+      _form.currentState!.save();
+
+      // await RemoteServices.medicineUpdate(id, name: _name, price: _price);
+
+      print("Data collected: $_name, $_price");
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
+      builder: (context) {
+        return Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _form,
+                  child: Column(
+                    children: [
+                      DefaultTextFormField(
+                        text: name,
+                        obscureText: false,
+                        hintText: "Name",
+                        label: "Name",
+                        validator: Constants.validator,
+                        onSaved: (newValue) => _name = newValue!,
+                      ),
+                      const SizedBox(height: 20.0),
+                      DefaultTextFormField(
+                        text: price,
+                        obscureText: false,
+                        hintText: "Price",
+                        label: "Price",
+                        validator: Constants.validator,
+                        keyboardInputType: TextInputType.number,
+                        onSaved: (newValue) => _price = newValue!,
+                      ),
+                      // const Spacer(),
+                      const SizedBox(height: 20.0),
+                      SizedBox(
+                        width: size.width,
+                        child: DefaultButton(
+                            onPressed: () {
+                              // controller.isClicked.value = true;
+                              updateDrug(medicineId);
+                            },
+                            textSize: 18,
+                            child: const DefaultText(
+                              text: "Update Drug",
+                              size: 18.0,
+                            )),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
