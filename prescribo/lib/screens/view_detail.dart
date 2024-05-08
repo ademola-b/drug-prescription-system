@@ -18,8 +18,8 @@ class ViewPatientDetail extends StatelessWidget {
     return Scaffold(
       backgroundColor: Constants.backgroundColor,
       appBar: AppBar(
-        title:
-            DefaultText(text: "Prescribe Drug for ${data['user'].firstName}"),
+        title: DefaultText(
+            text: "Prescribe Drug for ${data['patient'].user.firstName}"),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -29,7 +29,7 @@ class ViewPatientDetail extends StatelessWidget {
             children: [
               ClipOval(
                   child: Image.memory(
-                base64Decode(data['user'].imageMem!),
+                base64Decode(data['patient'].user.imageMem!),
                 width: 150,
                 height: 150,
                 fit: BoxFit.cover,
@@ -41,8 +41,8 @@ class ViewPatientDetail extends StatelessWidget {
                   DefaultButton(
                       onPressed: () {
                         Get.toNamed("/prescribeDrug", arguments: {
-                          'username': data['user'].username,
-                          'pk': data['user'].pk
+                          'username': data['patient'].user.username,
+                          'pk': data['patient'].pk
                         });
                       },
                       child: const DefaultText(text: "Prescribe Drug"))
@@ -56,7 +56,8 @@ class ViewPatientDetail extends StatelessWidget {
                     color: Constants.secondaryColor,
                   ),
                   DefaultText(
-                    text: "${data['user'].firstName} ${data['user'].lastName}",
+                    text:
+                        "${data['patient'].user.firstName} ${data['patient'].user.lastName}",
                     size: 20.0,
                     color: Constants.secondaryColor,
                   ),
@@ -71,7 +72,7 @@ class ViewPatientDetail extends StatelessWidget {
                     color: Constants.secondaryColor,
                   ),
                   DefaultText(
-                    text: "${data['user'].email}",
+                    text: "${data['patient'].user.email}",
                     size: 20.0,
                     color: Constants.secondaryColor,
                   ),
@@ -86,7 +87,7 @@ class ViewPatientDetail extends StatelessWidget {
                     color: Constants.secondaryColor,
                   ),
                   DefaultText(
-                    text: "${data['user'].phone}",
+                    text: "${data['patient'].phone}",
                     size: 20.0,
                     color: Constants.secondaryColor,
                   ),
@@ -101,7 +102,7 @@ class ViewPatientDetail extends StatelessWidget {
                     color: Constants.secondaryColor,
                   ),
                   DefaultText(
-                    text: "${data['user'].gender}",
+                    text: "${data['patient'].gender}",
                     size: 20.0,
                     color: Constants.secondaryColor,
                   ),
@@ -116,7 +117,7 @@ class ViewPatientDetail extends StatelessWidget {
                     color: Constants.secondaryColor,
                   ),
                   DefaultText(
-                    text: "${data['user'].dob}",
+                    text: "${data['patient'].dob}",
                     size: 20.0,
                     color: Constants.secondaryColor,
                   ),
@@ -131,7 +132,7 @@ class ViewPatientDetail extends StatelessWidget {
                     color: Constants.secondaryColor,
                   ),
                   DefaultText(
-                    text: "${data['user'].address}",
+                    text: "${data['patient'].address}",
                     size: 20.0,
                     color: Constants.secondaryColor,
                   ),

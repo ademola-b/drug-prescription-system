@@ -36,6 +36,7 @@ class DrugPrescribed(models.Model):
     dosage = models.CharField(max_length=50)
     quantity = models.PositiveIntegerField()
     prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE, related_name="drugs_prescribed", default=None)
+    total = models.FloatField(default=0.0)
     def __str__(self):
         return f"{self.drug.name}, dosage: {self.dosage}"
     

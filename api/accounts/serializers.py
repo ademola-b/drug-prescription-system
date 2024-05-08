@@ -81,9 +81,11 @@ class PatientSerializer(serializers.ModelSerializer):
         model = Patient
         fields = [
             "user",
+            "pk",
             "address",
             "dob",
-            "phone"
+            "phone",
+            "gender"
         ]
 
 class UpdateUserSerializer(serializers.ModelSerializer):

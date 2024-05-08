@@ -14,7 +14,8 @@ class DrugPrescribedSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class PrescriptionSerializer(serializers.ModelSerializer):
-    drug_prescribed = DrugPrescribedSerializer(many=True)
+    drug_prescribed = DrugPrescribedSerializer(many=True, required=False)
+    total = serializers.CharField(required=False)
     class Meta:
         model = Prescription
-        fields = "__all__"
+        exclude = ["doctor"]

@@ -21,13 +21,15 @@ class DrugsModView(RetrieveUpdateDestroyAPIView):
 class PrescriptionView(ListCreateAPIView):
     queryset = Prescription.objects.all()
     serializer_class = PrescriptionSerializer
-
+    permission_classes = [IsAuthenticated]
+   
     def post(self, request):
         data = request.data
         # extract drug_prescribed_data
         drug_pres_data = data.pop('drug_prescribed', [])
         print(f"data now: {data}")
         print(f"drug_pre: {drug_pres_data}")
+
         prescription_serializer = PrescriptionSerializer(data=data)
         if prescription_serializer.is_valid():
             prescription_instance = prescription_serializer.save(total=0.0)
@@ -42,8 +44,9 @@ class PrescriptionView(ListCreateAPIView):
                 else:
                     return Response(dp_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 
-                prescription_instance.total = total
-                prescription_instance.save()
+            prescription_instance.doctor = request.user
+            prescription_instance.total = total
+            prescription_instance.save()
             
             # create qrcode and send to user email
             

@@ -11,6 +11,7 @@ class DashboardController extends GetxController {
   RxString username = ''.obs;
   RxString noUser = ''.obs;
   RxBool isLoading = false.obs;
+  Rx<PatientResponse> patient = PatientResponse().obs;
 
   Future<void> fetchData() async {
     try {
@@ -26,10 +27,15 @@ class DashboardController extends GetxController {
       if (userDetails != null) {
         userType.value = userDetails.userType!;
         // Navigate to viewPatientDetail only if userDetails exist
-        if (patientDetails != null && patientDetails.detail != null) {
-          Get.showSnackbar(Constants.customSnackBar(
-              tag: false, message: "kindly update your profile"));
-          Get.toNamed("/updateProf");
+        if (userType.value == "patient") {
+          if (patientDetails != null) {
+            patient.value = patientDetails;
+          }
+          if (patientDetails != null && patientDetails.detail != null) {
+            Get.showSnackbar(Constants.customSnackBar(
+                tag: false, message: "kindly update your profile"));
+            Get.toNamed("/updateProf");
+          }
         }
       }
     } catch (e) {
@@ -69,16 +75,27 @@ class DashboardController extends GetxController {
   // }
 
   getUserDetailsWithUsername(String? username) async {
-    UserDetailResponse? user =
-        await RemoteServices.userDetails(username: username);
+    PatientResponse? patient =
+        await RemoteServices.patientDetail(username: username);
 
-    if (user != null) {
+    if (patient != null) {
       Get.close(1);
-      Get.toNamed("/viewPatientDetail", arguments: {'user': user});
+      Get.toNamed("/viewPatientDetail", arguments: {'patient': patient});
     } else {
       noUser.value = "User Not Found";
     }
   }
+  // getUserDetailsWithUsername(String? username) async {
+  //   UserDetailResponse? user =
+  //       await RemoteServices.userDetails(username: username);
+
+  //   if (user != null) {
+  //     Get.close(1);
+  //     Get.toNamed("/viewPatientDetail", arguments: {'user': user});
+  //   } else {
+  //     noUser.value = "User Not Found";
+  //   }
+  // }
 
   @override
   void onInit() async {

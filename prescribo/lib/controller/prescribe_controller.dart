@@ -14,6 +14,7 @@ class PrescribeController extends GetxController {
   RxString? drugId = ''.obs;
   RxList<DrugList> drugList = <DrugList>[].obs;
   RxBool isClicked = false.obs;
+  RxBool isLoading = false.obs;
   Rx<TextEditingController> qtyTxt = TextEditingController().obs;
   Rx<TextEditingController> dosageTxt = TextEditingController().obs;
 
@@ -21,18 +22,28 @@ class PrescribeController extends GetxController {
 
   RxList<Map<String, dynamic>> drugPrescribed = <Map<String, dynamic>>[].obs;
 
+  final data = Get.arguments;
+
   @override
   void onInit() async {
     // TODO: implement onInit
     super.onInit();
+    // print("data: $data");
     await drugListRem();
   }
 
   drugListRem() async {
     print("called");
-    List<DrugsResponse>? drugList = await RemoteServices.drugList();
-    if (drugList!.isNotEmpty) {
-      drugs.value = drugList;
+    try {
+      isLoading.value = true;
+      List<DrugsResponse>? drugList = await RemoteServices.drugList();
+      if (drugList!.isNotEmpty) {
+        drugs.value = drugList;
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -51,7 +62,7 @@ class PrescribeController extends GetxController {
     // initialize drugPrescribed
     Map<String, dynamic> item = {
       "drug": drugId!.value,
-      "qty": qtyTxt.value.text,
+      "quantity": qtyTxt.value.text,
       "dosage": dosageTxt.value.text,
       "price": price!.value,
       "total": int.parse(qtyTxt.value.text) * price!.value,
@@ -59,7 +70,7 @@ class PrescribeController extends GetxController {
 
     // add to dict
     drugPrescribed.add(item);
-    // print(drugPrescribed);
+    print(drugPrescribed);
   }
 
   double calculateTotal(RxList drugList) {

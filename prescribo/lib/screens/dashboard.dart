@@ -30,10 +30,24 @@ class Dashboard extends StatelessWidget {
         } else {
           if (controller.userType.value == 'patient') {
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [DefaultText(text: controller.userType.value)],
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        DefaultText(
+                            text:
+                                "Welcome, \n    ${controller.patient.value.user!.username}")
+                      ],
+                    ),
+                    const SizedBox(height: 20.0),
+                    const DefaultText(
+                        text: "Below cards is your medical history")
+                  ],
+                ),
               ),
             );
           } else if (controller.userType.value == 'pharmacist') {
@@ -58,7 +72,6 @@ class DoctorWidget extends StatelessWidget {
   final controller = Get.put(DashboardController());
 
   _viewDetail() async {
-    print("eee");
     var isValid = _formKey.currentState!.validate();
     if (!isValid) return;
     _formKey.currentState!.save();

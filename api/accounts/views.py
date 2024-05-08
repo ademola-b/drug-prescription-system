@@ -61,4 +61,21 @@ class RetrieveUserDetail(generics.RetrieveAPIView):
         except:
             return Response({"error": "Not Record found"}, status=status.HTTP_404_NOT_FOUND)
         
+class RetrievePatientDetailId(generics.RetrieveAPIView):
+    queryset = Patient.objects.all()
+    serializer_class = PatientSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, *args, **kwargs):
+        if not self.request.user.user_type == "doctor":
+            return Response({"error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        username = self.kwargs.get('username')
+        try:
+            patient = Patient.objects.get(user__username=username)
+            serializer = self.get_serializer(patient)
+            return Response(serializer.data)
+        except:
+            return Response({"error": "Not Record found"}, status=status.HTTP_404_NOT_FOUND)
+        
 

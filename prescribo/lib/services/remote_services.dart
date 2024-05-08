@@ -8,6 +8,7 @@ import 'package:prescribo/main.dart';
 import 'package:prescribo/models/drugs_response.dart';
 import 'package:prescribo/models/login_response.dart';
 import 'package:prescribo/models/patient_response.dart';
+import 'package:prescribo/models/prescription_create_response.dart';
 import 'package:prescribo/models/register_response.dart';
 import 'package:http/http.dart' as http;
 import 'package:prescribo/models/user_details.dart';
@@ -120,13 +121,19 @@ class RemoteServices {
     return null;
   }
 
-  static Future<PatientResponse?> patientDetail() async {
+  static Future<PatientResponse?> patientDetail({String? username}) async {
     try {
       http.Response response;
-
-      response = await http.get(patientUri, headers: {
-        'Authorization': "Token ${sharedPreferences.getString('token')}"
-      });
+      if (username != null) {
+        response = await http.get(Uri.parse("$baseUrl/auth/patient/$username/"),
+            headers: {
+              'Authorization': "Token ${sharedPreferences.getString('token')}"
+            });
+      } else {
+        response = await http.get(patientUri, headers: {
+          'Authorization': "Token ${sharedPreferences.getString('token')}"
+        });
+      }
 
       if (response.statusCode == 200) {
         print("patient: ${response.body}");
@@ -179,6 +186,36 @@ class RemoteServices {
         return drugsResponseFromJson(response.body);
       } else {
         throw Exception("Failed to get medicine");
+      }
+    } catch (e) {
+      Get.showSnackbar(
+          Constants.customSnackBar(message: "Server Error: $e", tag: false));
+    }
+  }
+
+  static Future<PrescriptionCreateResponse?> prescribeDrugs(
+      {required List<Map<String, dynamic>>? drugsPrescribe,
+      required String patient,
+      bool? payment,
+      required String diagnosis}) async {
+    try {
+      http.Response response = await http.post(prescribeUri,
+          body: jsonEncode({
+            "drug_prescribed": drugsPrescribe,
+            "diagnosis": diagnosis,
+            "payment_status": false,
+            "patient": patient
+          }),
+          headers: {
+            'content-type': 'application/json; charset=UTF-8',
+            'Authorization': "Token ${sharedPreferences.getString('token')}"
+          });
+      if (response.statusCode == 201) {
+        Get.showSnackbar(
+            Constants.customSnackBar(message: "Prescription Saved", tag: true));
+        return prescriptionCreateResponseFromJson(response.body);
+      } else {
+        throw Exception("${response.reasonPhrase}");
       }
     } catch (e) {
       Get.showSnackbar(
