@@ -7,6 +7,7 @@ import 'package:prescribo/controller/registration_controller.dart';
 import 'package:prescribo/main.dart';
 import 'package:prescribo/models/drugs_response.dart';
 import 'package:prescribo/models/login_response.dart';
+import 'package:prescribo/models/patient_prescription_response.dart';
 import 'package:prescribo/models/patient_response.dart';
 import 'package:prescribo/models/prescription_create_response.dart';
 import 'package:prescribo/models/register_response.dart';
@@ -108,7 +109,7 @@ class RemoteServices {
         });
       }
       if (response.statusCode == 200) {
-        print(response.body);
+        // print(response.body);
         return userDetailResponseFromJson(response.body);
       } else {
         print(response.reasonPhrase);
@@ -136,7 +137,7 @@ class RemoteServices {
       }
 
       if (response.statusCode == 200) {
-        print("patient: ${response.body}");
+        // print("patient: ${response.body}");
         return patientResponseFromJson(response.body);
       } else {
         var responseData = jsonDecode(response.body);
@@ -221,5 +222,26 @@ class RemoteServices {
       Get.showSnackbar(
           Constants.customSnackBar(message: "Server Error: $e", tag: false));
     }
+  }
+
+  static Future<List<PatientPrescriptionResponse?>?>
+      patientPrescriptions() async {
+    try {
+      http.Response response =
+          await http.get(patientPrescriptionsUri, headers: {
+        'content-type': 'application/json; charset=UTF-8',
+        'Authorization': "Token ${sharedPreferences.getString('token')}"
+      });
+      if (response.statusCode == 200) {
+        print(response.body);
+        return patientPrescriptionResponseFromJson(response.body);
+      } else {
+        print("error");
+        throw Exception(response.reasonPhrase);
+      }
+    } catch (e) {
+      Get.showSnackbar(Constants.customSnackBar(tag: false, message: "$e"));
+    }
+    return null;
   }
 }

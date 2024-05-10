@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:prescribo/models/patient_prescription_response.dart';
 import 'package:prescribo/models/patient_response.dart';
 import 'package:prescribo/models/user_details.dart';
 import 'package:prescribo/services/remote_services.dart';

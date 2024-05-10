@@ -2,9 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:prescribo/controller/dashboard_controller.dart';
+import 'package:prescribo/services/remote_services.dart';
 import 'package:prescribo/utils/constants.dart';
 import 'package:prescribo/utils/defaultButton.dart';
+import 'package:prescribo/utils/defaultContainer.dart';
 import 'package:prescribo/utils/defaultGesture.dart';
 import 'package:prescribo/utils/defaultText.dart';
 
@@ -57,6 +60,62 @@ class Dashboard extends StatelessWidget {
                     const SizedBox(height: 20.0),
                     const DefaultText(
                         text: "Below cards is your medical history"),
+                    const Spacer(),
+                    FutureBuilder(
+                        future: RemoteServices.patientPrescriptions(),
+                        builder: ((context, snapshot) {
+                          if (snapshot.hasData && snapshot.data!.isEmpty) {
+                            return const DefaultText(
+                              text: "No Prescriptions Found",
+                              size: 18.0,
+                              color: Constants.secondaryColor,
+                            );
+                          } else if (snapshot.hasData) {
+                            var data = snapshot.data!;
+                            return ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              itemCount: data.length,
+                              itemBuilder: (context, index) {
+                                return DefaultContainer(
+                                  child: ListTile(
+                                    title: DefaultText(
+                                        text:
+                                            "Diagnosis: ${data[index]!.diagnosis}",
+                                        color: Constants.secondaryColor,
+                                        size: 15.0),
+                                    trailing: DefaultText(
+                                        text:
+                                            "Amount: ${data[index]!.total.toString()}"),
+                                    subtitle: Row(
+                                      children: [
+                                        DefaultText(
+                                          text:
+                                              "Date: ${DateFormat("dd-MM-yyyy").format(data[index]!.date!)}",
+                                          size: 12.0,
+                                        ),
+                                        const Spacer(),
+                                        data[index]!.paymentStatus!
+                                            ? const DefaultText(
+                                                text: "PAID",
+                                                size: 12.0,
+                                              )
+                                            : const DefaultText(
+                                                text: "NOT PAID",
+                                                size: 12.0,
+                                                color: Colors.red,
+                                              ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          }
+                          return const CircularProgressIndicator(
+                              color: Constants.secondaryColor);
+                        })),
                     const Spacer(),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),

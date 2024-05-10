@@ -12,7 +12,7 @@ from rest_framework.generics import (ListCreateAPIView, ListAPIView,
 from accounts.models import Patient
 from . models import Drug, Prescription
 from . serializers import (DrugSerializer, PrescriptionSerializer, DrugPrescribedSerializer,
-                           FullPrescriptionSerializer)
+                           FullPrescriptionSerializer, FullDrugPrescribedSerializer)
 # Create your views here.
 
 class DrugsView(ListCreateAPIView, RetrieveUpdateDestroyAPIView):
@@ -100,6 +100,26 @@ class PrescriptionList(ListAPIView):
 
     def get_queryset(self):
         return Prescription.objects.filter(patient = self.request.user.patient)
+
+    def list(self, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
+
+        for prescription_data in serializer.data:
+            prescription_id = prescription_data['pres_id']
+            drug_prescribed_data = self.get_drugs_prescribed(prescription_id)
+            prescription_data['drug_prescribed'] = drug_prescribed_data
+
+        return Response(serializer.data)
+    
+    def get_drugs_prescribed(self, prescription_id):
+        pres = Prescription.objects.get(pres_id=prescription_id)
+        drugs_prescribed = pres.drugs_prescribed.all()
+        drug_prescribed_serializer = FullDrugPrescribedSerializer(drugs_prescribed, many=True)
+        return drug_prescribed_serializer.data
+
+
+
 
     # def get(self, *args, **kwargs):
     #     if not self.request.user.user_type == "patient":
