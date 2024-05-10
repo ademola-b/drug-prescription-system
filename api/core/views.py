@@ -1,4 +1,4 @@
-# import qrcode
+import qrcode
 from io import BytesIO
 import base64
 from django.core.mail import send_mail
@@ -6,11 +6,13 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import (ListCreateAPIView, ListAPIView, 
+                                     RetrieveUpdateDestroyAPIView)
 
 from accounts.models import Patient
 from . models import Drug, Prescription
-from . serializers import DrugSerializer, PrescriptionSerializer, DrugPrescribedSerializer
+from . serializers import (DrugSerializer, PrescriptionSerializer, DrugPrescribedSerializer,
+                           FullPrescriptionSerializer)
 # Create your views here.
 
 class DrugsView(ListCreateAPIView, RetrieveUpdateDestroyAPIView):
@@ -23,37 +25,38 @@ class DrugsModView(RetrieveUpdateDestroyAPIView):
     serializer_class = DrugSerializer
     permission_classes = [IsAuthenticated]
 
+def generate_qr(prescription_id):
+    qr_content = f'{prescription_id}'
+    qr_image = qrcode.make(qr_content, box_size=5)
+    qr_image_pil = qr_image.get_image()
+    stream = BytesIO()
+    qr_image.save(stream)
+    qr_image_data = stream.getvalue()
+    qr_image_base64 = base64.b64encode(qr_image_data).decode('utf-8')
+    return qr_image_base64
+    
+def qrcode_email(patient, code):
+    patientObj = Patient.objects.get(patient_id=patient)
+    subject = 'QR Prescription'
+    html_message = f"""
+        <html>
+            <body>
+                <h3>Hello {patientObj.user.first_name}</h3>
+                <p>You're receiving this email because you have been prescribed drugs at our facility.
+                the below is qr_code to access the details of the prescribed drugs. \n
+                scan the below code with the application.
+                <b>{code}</b>
+            </body>
+        </html>
+    """
+    # html_message = render_to_string('password_reset_email.html', {'reset_code': reset_code, 'user':user})
+    send_mail(subject, None, None, [patientObj.user.email], html_message=html_message)    
+
 class PrescriptionView(ListCreateAPIView):
     queryset = Prescription.objects.all()
     serializer_class = PrescriptionSerializer
     permission_classes = [IsAuthenticated]
 
-    # def generate_qr(prescription_id):
-    #     qr_content = f'{prescription_id}'
-    #     qr_image = qrcode.make(qr_content, box_size=5)
-    #     qr_image_pil = qr_image.get_image()
-    #     stream = BytesIO()
-    #     qr_image.save(stream)
-    #     qr_image_data = stream.getvalue()
-    #     qr_image_base64 = base64.b64encode(qr_image_data).decode('utf-8')
-    #     return qr_image_base64
-    
-    def qrcode_email(patient, code):
-        subject = 'QR Prescription'
-        html_message = f"""
-            <html>
-                <body>
-                    <h3>Hello {patient.user.first_name}</h3>
-                    <p>You're receiving this email because you have been prescribed drugs at our facility.
-                    the below is qr_code to access the details of the prescribed drugs. \n
-                    scan the below code with the application.
-                    <b>{code}</b>
-                </body>
-            </html>
-        """
-        # html_message = render_to_string('password_reset_email.html', {'reset_code': reset_code, 'user':user})
-        send_mail(subject, None, None, [patient.user.email], html_message=html_message)
-   
     def post(self, request):
         data = request.data
         # extract drug_prescribed_data
@@ -80,13 +83,37 @@ class PrescriptionView(ListCreateAPIView):
             prescription_instance.save()
             
             # create qrcode and send to user email
-            self.generate_qr(prescription_instance.pres_id)
+            code = generate_qr(prescription_instance.pres_id)
+            qrcode_email(patient=data['patient'], code=code)
 
-
-            patient = Patient.objects.get(pk = data['patient'])
-            patient_email = patient.user.email
+            # patient = Patient.objects.get(pk = data['patient'])
+            # patient_email = patient.user.email
      
             return Response(prescription_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(prescription_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+class PrescriptionList(ListAPIView):
+    queryset = Prescription.objects.all()
+    serializer_class = FullPrescriptionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Prescription.objects.filter(patient = self.request.user.patient)
+
+    # def get(self, *args, **kwargs):
+    #     if not self.request.user.user_type == "patient":
+    #         return Response({"error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+    #     # try:
+    #     prescriptions = Prescription.objects.filter(patient = self.request.user.patient)
+    #     # prescriptions = Prescription.objects.all()
+    #     print(prescriptions)
+    #     serializer = self.get_serializer(prescriptions)
+    #     # serializer.is_valid(raise_exception=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
+    #     # except:
+    #     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
 

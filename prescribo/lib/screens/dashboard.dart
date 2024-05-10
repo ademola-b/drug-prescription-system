@@ -1,15 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prescribo/controller/dashboard_controller.dart';
-import 'package:prescribo/services/remote_services.dart';
 import 'package:prescribo/utils/constants.dart';
 import 'package:prescribo/utils/defaultButton.dart';
 import 'package:prescribo/utils/defaultGesture.dart';
 import 'package:prescribo/utils/defaultText.dart';
-import 'package:prescribo/utils/defaultTextFormField.dart';
 
 class Dashboard extends StatelessWidget {
   final controller = Get.put(DashboardController());
+
+  Dashboard({super.key});
   viewDetail() async {}
   @override
   Widget build(BuildContext context) {
@@ -37,15 +39,54 @@ class Dashboard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         DefaultText(
                             text:
-                                "Welcome, \n    ${controller.patient.value.user!.username}")
+                                "Welcome, \n ${controller.patient.value.user!.username}"),
+                        ClipOval(
+                            child: Image.memory(
+                          base64Decode(
+                              controller.patient.value.user!.imageMem!),
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        ))
                       ],
                     ),
                     const SizedBox(height: 20.0),
                     const DefaultText(
-                        text: "Below cards is your medical history")
+                        text: "Below cards is your medical history"),
+                    const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width / 1.5,
+                        child: TextButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.white),
+                            padding: MaterialStateProperty.all(
+                                const EdgeInsets.all(15.0)),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                side: const BorderSide(
+                                    color: Constants.primaryColor),
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                            ),
+                          ),
+                          onPressed: () async {
+                            Get.toNamed('/scan');
+                          },
+                          child: const DefaultText(
+                            color: Constants.primaryColor,
+                            text: "Scan Prescription",
+                            size: 18,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

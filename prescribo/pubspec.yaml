@@ -43,6 +43,8 @@ dependencies:
   intl: ^0.18.1
   http: ^0.13.5
   dropdown_search: ^3.0.1
+  mobile_scanner: ^2.1.0
+
 
 dev_dependencies:
   flutter_test:

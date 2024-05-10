@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from accounts.serializers import UserDetailsSerializer
+from accounts.serializers import UserDetailsSerializer, PatientSerializer
 from .models import Drug, DrugPrescribed, Prescription
 
 class DrugSerializer(serializers.ModelSerializer):
@@ -19,3 +19,11 @@ class PrescriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Prescription
         exclude = ["doctor"]
+
+class FullPrescriptionSerializer(serializers.ModelSerializer):
+    # drug_prescribed = DrugPrescribedSerializer(many=True)
+    patient = PatientSerializer()
+    class Meta:
+        model = Prescription
+        fields = "__all__"
+    
