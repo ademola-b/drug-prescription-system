@@ -3,8 +3,12 @@ import 'package:get/get.dart';
 import 'package:prescribo/screens/dashboard.dart';
 import 'package:prescribo/screens/drugs.dart';
 import 'package:prescribo/screens/login.dart';
+import 'package:prescribo/screens/payment_success.dart';
 import 'package:prescribo/screens/prescribe_drug.dart';
+import 'package:prescribo/screens/prescription_detail.dart';
+import 'package:prescribo/screens/qr.dart';
 import 'package:prescribo/screens/scanner/qr_scanner.dart';
+import 'package:prescribo/screens/scanner/result.dart';
 import 'package:prescribo/screens/update_profile.dart';
 import 'package:prescribo/screens/view_detail.dart';
 import 'package:prescribo/screens/register.dart';
@@ -39,7 +43,12 @@ class Prescribo extends StatelessWidget {
         GetPage(name: "/viewPatientDetail", page: () => ViewPatientDetail()),
         GetPage(name: "/prescribeDrug", page: () => PrescribeDrug()),
         GetPage(name: "/drugs", page: () => Drugs()),
-        GetPage(name: "/scan", page: () => const Scan())
+        GetPage(name: "/scan", page: () => const Scan()),
+        // GetPage(name: "/result", page: () => ScannedQR()),
+        GetPage(name: "/payment_success", page: () => PaymentSuccessful()),
+        GetPage(name: "/qr", page: () => QR()),
+        GetPage(
+            name: "/prescriptionDetails", page: () => PrescriptionDetails()),
       ],
     );
   }

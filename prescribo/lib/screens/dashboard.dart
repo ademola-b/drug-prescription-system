@@ -34,119 +34,141 @@ class Dashboard extends StatelessWidget {
           );
         } else {
           if (controller.userType.value == 'patient') {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  // mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        DefaultText(
-                            text:
-                                "Welcome, \n ${controller.patient.value.user!.username}"),
-                        ClipOval(
-                            child: Image.memory(
-                          base64Decode(
-                              controller.patient.value.user!.imageMem!),
-                          width: 50,
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ))
-                      ],
-                    ),
-                    const SizedBox(height: 20.0),
-                    const DefaultText(
-                        text: "Below cards is your medical history"),
-                    const Spacer(),
-                    FutureBuilder(
-                        future: RemoteServices.patientPrescriptions(),
-                        builder: ((context, snapshot) {
-                          if (snapshot.hasData && snapshot.data!.isEmpty) {
-                            return const DefaultText(
-                              text: "No Prescriptions Found",
-                              size: 18.0,
-                              color: Constants.secondaryColor,
-                            );
-                          } else if (snapshot.hasData) {
-                            var data = snapshot.data!;
-                            return ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              itemCount: data.length,
-                              itemBuilder: (context, index) {
-                                return DefaultContainer(
-                                  child: ListTile(
-                                    title: DefaultText(
-                                        text:
-                                            "Diagnosis: ${data[index]!.diagnosis}",
-                                        color: Constants.secondaryColor,
-                                        size: 15.0),
-                                    trailing: DefaultText(
-                                        text:
-                                            "Amount: ${data[index]!.total.toString()}"),
-                                    subtitle: Row(
-                                      children: [
-                                        DefaultText(
-                                          text:
-                                              "Date: ${DateFormat("dd-MM-yyyy").format(data[index]!.date!)}",
-                                          size: 12.0,
-                                        ),
-                                        const Spacer(),
-                                        data[index]!.paymentStatus!
-                                            ? const DefaultText(
-                                                text: "PAID",
-                                                size: 12.0,
-                                              )
-                                            : const DefaultText(
-                                                text: "NOT PAID",
-                                                size: 12.0,
-                                                color: Colors.red,
-                                              ),
-                                      ],
-                                    ),
-                                  ),
+            return SingleChildScrollView(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    // mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          DefaultText(
+                              text:
+                                  "Welcome, \n ${controller.patient.value.user!.username}"),
+                          ClipOval(
+                              child: Image.memory(
+                            base64Decode(
+                                controller.patient.value.user!.imageMem!),
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ))
+                        ],
+                      ),
+                      const SizedBox(height: 20.0),
+                      const DefaultText(
+                          text: "Below cards is your medical history"),
+                      // const Spacer(),
+                      SizedBox(
+                        child: FutureBuilder(
+                            future: RemoteServices.patientPrescriptions(),
+                            builder: ((context, snapshot) {
+                              if (snapshot.hasData && snapshot.data!.isEmpty) {
+                                return const DefaultText(
+                                  text: "No Prescriptions Found",
+                                  size: 18.0,
+                                  color: Constants.secondaryColor,
                                 );
-                              },
-                            );
-                          }
-                          return const CircularProgressIndicator(
-                              color: Constants.secondaryColor);
-                        })),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width / 1.5,
-                        child: TextButton(
-                          style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.white),
-                            padding: MaterialStateProperty.all(
-                                const EdgeInsets.all(15.0)),
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                side: const BorderSide(
-                                    color: Constants.primaryColor),
-                                borderRadius: BorderRadius.circular(30.0),
+                              } else if (snapshot.hasData) {
+                                var data = snapshot.data!;
+                                return ListView.builder(
+                                  scrollDirection: Axis.vertical,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: data.length,
+                                  itemBuilder: (context, index) {
+                                    return DefaultContainer(
+                                      child: GestureDetector(
+                                        onTap: (() => Get.toNamed(
+                                                "/prescriptionDetails",
+                                                arguments: {
+                                                  'pres_id':
+                                                      data[index]!.presId,
+                                                  'drugs_prescribed':
+                                                      data[index]!
+                                                          .drugPrescribed,
+                                                  'amount': data[index]!.total!.toInt(),
+                                                  'status': data[index]!
+                                                      .paymentStatus,
+                                                  'email': data[index]!
+                                                      .patient!
+                                                      .user!
+                                                      .email
+                                                })),
+                                        child: ListTile(
+                                          title: DefaultText(
+                                              text:
+                                                  "Diagnosis: ${data[index]!.diagnosis}",
+                                              color: Constants.secondaryColor,
+                                              size: 15.0),
+                                          trailing: DefaultText(
+                                              text:
+                                                  "Amount: ${data[index]!.total.toString()}"),
+                                          subtitle: Row(
+                                            children: [
+                                              DefaultText(
+                                                text:
+                                                    "Date: ${DateFormat("dd-MM-yyyy").format(data[index]!.date!)}",
+                                                size: 12.0,
+                                              ),
+                                              const Spacer(),
+                                              data[index]!.paymentStatus!
+                                                  ? const DefaultText(
+                                                      text: "PAID",
+                                                      size: 12.0,
+                                                    )
+                                                  : const DefaultText(
+                                                      text: "NOT PAID",
+                                                      size: 12.0,
+                                                      color: Colors.red,
+                                                    ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              }
+                              return const CircularProgressIndicator(
+                                  color: Constants.secondaryColor);
+                            })),
+                      ),
+                      // const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width / 1.5,
+                          child: TextButton(
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.white),
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.all(15.0)),
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  side: const BorderSide(
+                                      color: Constants.primaryColor),
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
                               ),
                             ),
-                          ),
-                          onPressed: () async {
-                            Get.toNamed('/scan');
-                          },
-                          child: const DefaultText(
-                            color: Constants.primaryColor,
-                            text: "Scan Prescription",
-                            size: 18,
+                            onPressed: () async {
+                              Get.toNamed('/scan');
+                            },
+                            child: const DefaultText(
+                              color: Constants.primaryColor,
+                              text: "Scan Prescription",
+                              size: 18,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );

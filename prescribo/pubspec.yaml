@@ -44,6 +44,11 @@ dependencies:
   http: ^0.13.5
   dropdown_search: ^3.0.1
   mobile_scanner: ^2.1.0
+  qr_flutter: ^4.0.0 #for viewing qr
+  flutter_paystack:
+    git:
+      url: https://github.com/peterchibunna/flutter_paystack
+      ref: master
 
 
 dev_dependencies:

@@ -9,12 +9,13 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import (ListCreateAPIView, ListAPIView, 
-                                     RetrieveUpdateDestroyAPIView)
+                                     RetrieveUpdateDestroyAPIView, UpdateAPIView)
 
 from accounts.models import Patient
 from . models import Drug, Prescription
 from . serializers import (DrugSerializer, PrescriptionSerializer, DrugPrescribedSerializer,
-                           FullPrescriptionSerializer, FullDrugPrescribedSerializer)
+                           FullPrescriptionSerializer, FullDrugPrescribedSerializer,
+                           PaymentStatusUpdateSerializer)
 # Create your views here.
 
 class DrugsView(ListCreateAPIView, RetrieveUpdateDestroyAPIView):
@@ -33,7 +34,18 @@ def generate_qr(prescription_id):
     stream = BytesIO()
     qr_image.save(stream, format='PNG')  # Save the image directly to BytesIO
     qr_image_data = stream.getvalue()
+
     return qr_image_data
+
+def generate_save_qr(id):
+    qr_image = qrcode.make(id, box_size=2)
+    # qr_image = qrcode.make(certificate.serial_number, box_size=5)
+    qr_image_pil = qr_image.get_image()
+    stream = BytesIO()
+    qr_image_pil.save(stream, format='PNG')
+    qr_image_data = stream.getvalue()
+    qr_image_base64 = base64.b64encode(qr_image_data).decode('utf-8')
+    return qr_image_base64
 
 def send_qr_code_email(patient_id, prescription_id):
     patient = Patient.objects.get(patient_id=patient_id)
@@ -81,6 +93,7 @@ class PrescriptionView(ListCreateAPIView):
                 
             prescription_instance.doctor = request.user
             prescription_instance.total = total
+            prescription_instance.qr_image = generate_save_qr(prescription_instance.pres_id)
             prescription_instance.save()
             
             # create qrcode and send to user email
@@ -96,7 +109,11 @@ class PrescriptionList(ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Prescription.objects.filter(patient = self.request.user.patient)
+        pres_id = self.kwargs.get('prescription_id')
+        if pres_id:
+            return Prescription.objects.filter(pres_id=pres_id)
+        else:
+            return Prescription.objects.filter(patient = self.request.user.patient)
 
     def list(self, *args, **kwargs):
         queryset = self.get_queryset()
@@ -116,8 +133,6 @@ class PrescriptionList(ListAPIView):
         return drug_prescribed_serializer.data
 
 
-
-
     # def get(self, *args, **kwargs):
     #     if not self.request.user.user_type == "patient":
     #         return Response({"error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -132,5 +147,11 @@ class PrescriptionList(ListAPIView):
     #     # except:
     #     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    
+
+class PrescriptionUpdatePaymentStatusView(UpdateAPIView):
+    queryset = Prescription.objects.all()
+    serializer_class = PaymentStatusUpdateSerializer
+    permission_classes = [IsAuthenticated]
+
+    # def update()
 

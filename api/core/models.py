@@ -25,6 +25,7 @@ class Prescription(models.Model):
     diagnosis = models.CharField(max_length=200)
     payment_status = models.BooleanField(default=False)
     total = models.FloatField()
+    qr_image = models.ImageField(upload_to='qr_code/', default="default.jpg")
 
     def __str__(self):
         return f"Patient: {self.patient}, Total: {self.total}, Payment Status: {self.payment_status}"

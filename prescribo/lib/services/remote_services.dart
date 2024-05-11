@@ -244,4 +244,24 @@ class RemoteServices {
     }
     return null;
   }
+
+  static Future<bool> paymentStatus(String presId) async {
+    try {
+      http.Response response = await http.put(
+          Uri.parse("$baseUrl/core/prescription/$presId/payment/"),
+          body: jsonEncode({"payment_status": true}),
+          headers: {
+            'content-type': 'application/json; charset=UTF-8',
+            'Authorization': "Token ${sharedPreferences.getString('token')}"
+          });
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception("${response.reasonPhrase}");
+      }
+    } catch (e) {
+      Get.showSnackbar(Constants.customSnackBar(tag: false, message: "$e"));
+    }
+    return false;
+  }
 }

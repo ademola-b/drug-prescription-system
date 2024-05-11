@@ -90,6 +90,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.2"
+  flutter_paystack:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: master
+      resolved-ref: "97d2d41e60f12a0d647fcb6c564d945750a235b6"
+      url: "https://github.com/peterchibunna/flutter_paystack"
+    source: git
+    version: "1.0.7"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -247,6 +256,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.5"
+  qr:
+    dependency: transitive
+    description:
+      name: qr
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0"
+  qr_flutter:
+    dependency: "direct main"
+    description:
+      name: qr_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.0"
   shared_preferences:
     dependency: "direct main"
     description:

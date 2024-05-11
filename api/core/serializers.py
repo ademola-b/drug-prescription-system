@@ -32,4 +32,9 @@ class FullPrescriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Prescription
         fields = "__all__"
+
+class PaymentStatusUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prescription
+        fields = ['payment_status']
     
