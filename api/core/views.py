@@ -1,8 +1,10 @@
 import qrcode
 from io import BytesIO
 import base64
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMultiAlternatives
 from django.shortcuts import render
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -28,29 +30,28 @@ class DrugsModView(RetrieveUpdateDestroyAPIView):
 def generate_qr(prescription_id):
     qr_content = f'{prescription_id}'
     qr_image = qrcode.make(qr_content, box_size=5)
-    qr_image_pil = qr_image.get_image()
     stream = BytesIO()
-    qr_image.save(stream)
+    qr_image.save(stream, format='PNG')  # Save the image directly to BytesIO
     qr_image_data = stream.getvalue()
-    qr_image_base64 = base64.b64encode(qr_image_data).decode('utf-8')
-    return qr_image_base64
-    
-def qrcode_email(patient, code):
-    patientObj = Patient.objects.get(patient_id=patient)
+    return qr_image_data
+
+def send_qr_code_email(patient_id, prescription_id):
+    patient = Patient.objects.get(patient_id=patient_id)
+    qr_image_data = generate_qr(prescription_id)
+
     subject = 'QR Prescription'
-    html_message = f"""
-        <html>
-            <body>
-                <h3>Hello {patientObj.user.first_name}</h3>
-                <p>You're receiving this email because you have been prescribed drugs at our facility.
-                the below is qr_code to access the details of the prescribed drugs. \n
-                scan the below code with the application.
-                <b>{code}</b>
-            </body>
-        </html>
-    """
-    # html_message = render_to_string('password_reset_email.html', {'reset_code': reset_code, 'user':user})
-    send_mail(subject, None, None, [patientObj.user.email], html_message=html_message)    
+    context = {'patient_name': patient.user.first_name}
+    html_message = render_to_string('email/qrcode_email.html', context)
+    plain_message = strip_tags(html_message)  # Strip HTML tags for the plain text version
+    from_email = 'ademolabello519@gmail.com'  # Replace with your email address
+    to_email = patient.user.email
+    
+    # Attach the QR code image to the email
+    email = EmailMultiAlternatives(subject, plain_message, from_email, [to_email])
+    email.attach_alternative(html_message, "text/html")
+    email.attach('qr_code.png', qr_image_data, 'image/png')
+    
+    email.send()
 
 class PrescriptionView(ListCreateAPIView):
     queryset = Prescription.objects.all()
@@ -83,11 +84,7 @@ class PrescriptionView(ListCreateAPIView):
             prescription_instance.save()
             
             # create qrcode and send to user email
-            code = generate_qr(prescription_instance.pres_id)
-            qrcode_email(patient=data['patient'], code=code)
-
-            # patient = Patient.objects.get(pk = data['patient'])
-            # patient_email = patient.user.email
+            send_qr_code_email(patient_id=data['patient'], prescription_id=prescription_instance.pres_id)
      
             return Response(prescription_serializer.data, status=status.HTTP_201_CREATED)
         else:
