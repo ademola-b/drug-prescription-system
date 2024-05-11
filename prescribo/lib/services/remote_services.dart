@@ -224,14 +224,22 @@ class RemoteServices {
     }
   }
 
-  static Future<List<PatientPrescriptionResponse?>?>
-      patientPrescriptions() async {
+  static Future<List<PatientPrescriptionResponse?>?> patientPrescriptions(
+      {String? id}) async {
     try {
-      http.Response response =
-          await http.get(patientPrescriptionsUri, headers: {
-        'content-type': 'application/json; charset=UTF-8',
-        'Authorization': "Token ${sharedPreferences.getString('token')}"
-      });
+      http.Response response;
+      if (id != null) {
+        response = await http.get(Uri.parse("$baseUrl/core/prescriptions/$id/"),
+            headers: {
+              'Authorization': "Token ${sharedPreferences.getString('token')}"
+            });
+      } else {
+        response = await http.get(patientPrescriptionsUri, headers: {
+          'content-type': 'application/json; charset=UTF-8',
+          'Authorization': "Token ${sharedPreferences.getString('token')}"
+        });
+      }
+
       if (response.statusCode == 200) {
         print(response.body);
         return patientPrescriptionResponseFromJson(response.body);

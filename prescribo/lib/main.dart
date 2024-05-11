@@ -44,7 +44,7 @@ class Prescribo extends StatelessWidget {
         GetPage(name: "/prescribeDrug", page: () => PrescribeDrug()),
         GetPage(name: "/drugs", page: () => Drugs()),
         GetPage(name: "/scan", page: () => const Scan()),
-        // GetPage(name: "/result", page: () => ScannedQR()),
+        GetPage(name: "/result", page: () => ScannedQR()),
         GetPage(name: "/payment_success", page: () => PaymentSuccessful()),
         GetPage(name: "/qr", page: () => QR()),
         GetPage(

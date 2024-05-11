@@ -90,7 +90,9 @@ class Dashboard extends StatelessWidget {
                                                   'drugs_prescribed':
                                                       data[index]!
                                                           .drugPrescribed,
-                                                  'amount': data[index]!.total!.toInt(),
+                                                  'amount': data[index]!
+                                                      .total!
+                                                      .toInt(),
                                                   'status': data[index]!
                                                       .paymentStatus,
                                                   'email': data[index]!
@@ -119,6 +121,7 @@ class Dashboard extends StatelessWidget {
                                                   ? const DefaultText(
                                                       text: "PAID",
                                                       size: 12.0,
+                                                      color: Colors.green,
                                                     )
                                                   : const DefaultText(
                                                       text: "NOT PAID",
