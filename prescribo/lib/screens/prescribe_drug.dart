@@ -27,6 +27,7 @@ class PrescribeDrug extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+        backgroundColor: Constants.backgroundColor,
         appBar: AppBar(
           title: const DefaultText(text: "Prescribe"),
           centerTitle: true,
@@ -63,7 +64,7 @@ class PrescribeDrug extends StatelessWidget {
                             itemAsString: (DrugsResponse? drug) => drug!.name!,
                             showSearchBox: true,
                             dropdownSearchDecoration: const InputDecoration(
-                                labelText: "Medicine",
+                                labelText: "Drug",
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: UnderlineInputBorder(
@@ -103,7 +104,7 @@ class PrescribeDrug extends StatelessWidget {
                                   icon: Icons.date_range_outlined,
                                   fillColor: Colors.white,
                                   maxLines: 1,
-                                  keyboardInputType: TextInputType.number,
+                                  keyboardInputType: TextInputType.text,
                                   onSaved: (value) =>
                                       controller.dosage!.value = value!,
                                 ),

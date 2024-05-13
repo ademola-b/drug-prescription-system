@@ -26,7 +26,10 @@ class PrescriptionDetails extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const DefaultText(text: "Below is the list of prescribed drugs"),
+              const DefaultText(
+                text: "Below is the list of prescribed drugs",
+                size: 18.0,
+              ),
               const SizedBox(height: 20.0),
               controller.data['drugs_prescribed'].isNotEmpty
                   ? ListView.builder(

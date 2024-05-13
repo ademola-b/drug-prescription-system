@@ -46,8 +46,10 @@ class Dashboard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           DefaultText(
-                              text:
-                                  "Welcome, \n ${controller.patient.value.user!.username}"),
+                            text:
+                                "Welcome, \n ${controller.patient.value.user!.username}",
+                            size: 18.0,
+                          ),
                           ClipOval(
                               child: Image.memory(
                             base64Decode(
@@ -60,8 +62,9 @@ class Dashboard extends StatelessWidget {
                       ),
                       const SizedBox(height: 20.0),
                       const DefaultText(
+                          size: 18.0,
                           text: "Below cards is your medical history"),
-                      // const Spacer(),
+                      const SizedBox(height: 20.0),
                       SizedBox(
                         child: FutureBuilder(
                             future: RemoteServices.patientPrescriptions(),
@@ -141,6 +144,8 @@ class Dashboard extends StatelessWidget {
                             })),
                       ),
                       // const Spacer(),
+                      const SizedBox(height: 20.0),
+
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: SizedBox(

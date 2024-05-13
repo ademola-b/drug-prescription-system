@@ -62,7 +62,7 @@ class Register extends StatelessWidget {
                       DefaultTextFormField(
                         obscureText: false,
                         label: "email",
-                        icon: Icons.person,
+                        icon: Icons.email,
                         fillColor: Colors.white,
                         validator: Constants.validator,
                         onSaved: (newValue) =>

@@ -12,9 +12,11 @@ class QR extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: DefaultText(text: "Prescription Qr Code")),
-      body: QrImage(
-        data: data['id'],
-        size: 200,
+      body: Center(
+        child: QrImage(
+          data: data['id'],
+          size: 200,
+        ),
       ),
     );
   }
