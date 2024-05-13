@@ -14,7 +14,7 @@ class Drugs extends StatelessWidget {
   Drugs({super.key});
 
   final _form = GlobalKey<FormState>();
-  late String _name, _price;
+  late String _name, _price, _gram, _expiryDate;
 
   final controller = Get.put(DrugController());
 
@@ -22,8 +22,16 @@ class Drugs extends StatelessWidget {
     var isValid = _form.currentState!.validate();
     if (!isValid) return;
     _form.currentState!.save();
+    controller.isClicked.value = true;
 
-    // await RemoteServices.addMedicine(name: _name, price: double.parse(_price));
+    await RemoteServices.addDrug(
+      name: _name,
+      price: double.parse(_price),
+      gram: double.parse(_gram),
+      expireDate: _expiryDate,
+    );
+    controller.isClicked.value = false;
+    Get.close(1);
     // print("Data collected: $_name, $_price");
   }
 
@@ -63,83 +71,106 @@ class Drugs extends StatelessWidget {
                 maxLines: 1,
               ),
               const SizedBox(height: 30),
-              controller.data['userType'] == 'pharmacist'
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        DefaultButton(
-                            onPressed: () {
-                              showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20.0),
-                                          topRight: Radius.circular(20.0))),
-                                  builder: (context) {
-                                    return Padding(
-                                      padding: EdgeInsets.only(
-                                          bottom: MediaQuery.of(context)
-                                              .viewInsets
-                                              .bottom),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(20.0),
-                                            child: Form(
-                                              key: _form,
-                                              child: Column(
-                                                children: [
-                                                  DefaultTextFormField(
-                                                    obscureText: false,
-                                                    hintText: "Name",
-                                                    label: "Name",
-                                                    validator:
-                                                        Constants.validator,
-                                                    onSaved: (newValue) =>
-                                                        _name = newValue!,
-                                                  ),
-                                                  const SizedBox(height: 20.0),
-                                                  DefaultTextFormField(
-                                                    obscureText: false,
-                                                    hintText: "Price",
-                                                    label: "Price",
-                                                    validator:
-                                                        Constants.validator,
-                                                    keyboardInputType:
-                                                        TextInputType.number,
-                                                    onSaved: (newValue) =>
-                                                        _price = newValue!,
-                                                  ),
-                                                  // const Spacer(),
-                                                  const SizedBox(height: 20.0),
-                                                  SizedBox(
-                                                    width: size.width,
-                                                    child: DefaultButton(
-                                                        onPressed: () {
-                                                          _addDrug();
-                                                        },
-                                                        textSize: 18,
-                                                        child:
-                                                            const DefaultText(
-                                                          text: "Submit",
-                                                        )),
-                                                  )
-                                                ],
-                                              ),
+              // controller.data['userType'] == 'pharmacist'
+              // ?
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  DefaultButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20.0),
+                                    topRight: Radius.circular(20.0))),
+                            builder: (context) {
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                    bottom: MediaQuery.of(context)
+                                        .viewInsets
+                                        .bottom),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Form(
+                                        key: _form,
+                                        child: Column(
+                                          children: [
+                                            DefaultTextFormField(
+                                              obscureText: false,
+                                              hintText: "Name",
+                                              label: "Name",
+                                              validator: Constants.validator,
+                                              onSaved: (newValue) =>
+                                                  _name = newValue!,
                                             ),
-                                          ),
-                                        ],
+                                            const SizedBox(height: 20.0),
+                                            DefaultTextFormField(
+                                              obscureText: false,
+                                              hintText: "Price",
+                                              label: "Price",
+                                              validator: Constants.validator,
+                                              keyboardInputType:
+                                                  TextInputType.number,
+                                              onSaved: (newValue) =>
+                                                  _price = newValue!,
+                                            ),
+                                            const SizedBox(height: 20.0),
+                                            DefaultTextFormField(
+                                              obscureText: false,
+                                              hintText: "Gram",
+                                              label: "Gram",
+                                              validator: Constants.validator,
+                                              keyboardInputType:
+                                                  TextInputType.number,
+                                              onSaved: (newValue) =>
+                                                  _gram = newValue!,
+                                            ),
+                                            const SizedBox(height: 20.0),
+                                            DefaultTextFormField(
+                                              text: controller.expiryDate.value,
+                                              onTap: () =>
+                                                  controller.pickDate(context),
+                                              obscureText: false,
+                                              hintText: "Expiry Date",
+                                              label: "Expiry Date",
+                                              validator: Constants.validator,
+                                              keyboardInputType:
+                                                  TextInputType.none,
+                                              onSaved: (newValue) =>
+                                                  _expiryDate = newValue!,
+                                            ),
+                                            // const Spacer(),
+                                            const SizedBox(height: 20.0),
+                                            SizedBox(
+                                              width: size.width,
+                                              child: DefaultButton(
+                                                  onPressed: () {
+                                                    _addDrug();
+                                                  },
+                                                  textSize: 18,
+                                                  child: const DefaultText(
+                                                    text: "Submit",
+                                                  )),
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                    );
-                                  });
-                            },
-                            textSize: 18,
-                            child: const DefaultText(text: "Add Drug"))
-                      ],
-                    )
-                  : const SizedBox.shrink(),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            });
+                      },
+                      textSize: 18,
+                      child: const DefaultText(text: "Add Drug"))
+                ],
+              ),
+              // : const SizedBox.shrink(),
               const SizedBox(height: 20.0),
               FutureBuilder(
                   future: RemoteServices.drugList(),
@@ -164,6 +195,9 @@ class Drugs extends StatelessWidget {
                                       "${data[index].drugId}",
                                       "${data[index].name}",
                                       "${data[index].price}",
+                                      "${data[index].gram}",
+                                      DateFormat("dd-MM-yyyy")
+                                          .format(data[index].expiryDate!),
                                       context);
                                 },
                                 child: ListTile(

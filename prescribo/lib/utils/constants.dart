@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/snackbar/snackbar.dart';
+import 'package:prescribo/controller/drug_controller.dart';
 import 'package:prescribo/models/drugs_response.dart';
+import 'package:prescribo/services/remote_services.dart';
 import 'package:prescribo/utils/defaultButton.dart';
 import 'package:prescribo/utils/defaultText.dart';
 import 'package:intl/intl.dart';
@@ -110,22 +112,40 @@ class Constants {
             ));
   }
 
-  static void showDrugDetails(Size size, String medicineId, String nameText,
-      String priceText, BuildContext context) {
+  static void showDrugDetails(
+      Size size,
+      String drugId,
+      String nameText,
+      String priceText,
+      String gramText,
+      String expiryDateText,
+      BuildContext context) {
     final _form = GlobalKey<FormState>();
-    late String _name, _price;
+    late String _name, _price, _gram, _expiryDate;
+
+    final controller = Get.put(DrugController());
 
     TextEditingController name = TextEditingController(text: nameText);
     TextEditingController price = TextEditingController(text: priceText);
+    TextEditingController gram = TextEditingController(text: gramText);
+    TextEditingController expiryDate =
+        TextEditingController(text: expiryDateText);
+
+    controller.expiryDate.value.text = expiryDateText;
 
     updateDrug(String id) async {
       var isValid = _form.currentState!.validate();
       if (!isValid) return;
       _form.currentState!.save();
 
-      // await RemoteServices.medicineUpdate(id, name: _name, price: _price);
+      await RemoteServices.updateDrug(
+          id: id,
+          name: _name,
+          price: double.parse(_price),
+          gram: double.parse(_gram),
+          expireDate: _expiryDate);
 
-      print("Data collected: $_name, $_price");
+      print("Data collected: $_name, $_expiryDate");
     }
 
     showModalBottomSheet(
@@ -165,6 +185,30 @@ class Constants {
                         keyboardInputType: TextInputType.number,
                         onSaved: (newValue) => _price = newValue!,
                       ),
+                      const SizedBox(height: 20.0),
+
+                      DefaultTextFormField(
+                        text: gram,
+                        obscureText: false,
+                        hintText: "Gram",
+                        label: "Gram",
+                        validator: Constants.validator,
+                        keyboardInputType: TextInputType.number,
+                        onSaved: (newValue) => _gram = newValue!,
+                      ),
+                      const SizedBox(height: 20.0),
+
+                      DefaultTextFormField(
+                        text: controller.expiryDate.value,
+                        onTap: () =>
+                            Get.put(DrugController()).pickDate(context),
+                        obscureText: false,
+                        hintText: "Expiry Date",
+                        label: "Expiry Date",
+                        validator: Constants.validator,
+                        keyboardInputType: TextInputType.none,
+                        onSaved: (newValue) => _expiryDate = newValue!,
+                      ),
                       // const Spacer(),
                       const SizedBox(height: 20.0),
                       SizedBox(
@@ -172,7 +216,7 @@ class Constants {
                         child: DefaultButton(
                             onPressed: () {
                               // controller.isClicked.value = true;
-                              updateDrug(medicineId);
+                              updateDrug(drugId);
                             },
                             textSize: 18,
                             child: const DefaultText(

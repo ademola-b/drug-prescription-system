@@ -11,7 +11,7 @@ class Drug(models.Model):
     drug_id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False, unique=True)
     name = models.CharField(max_length=50)
     gram = models.FloatField()
-    expiry_date = models.DateTimeField()
+    expiry_date = models.DateField()
     price = models.FloatField()
 
     def __str__(self):

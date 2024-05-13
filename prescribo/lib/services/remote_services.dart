@@ -194,6 +194,60 @@ class RemoteServices {
     }
   }
 
+  static Future<DrugsResponse?> addDrug(
+      {String? name, double? gram, String? expireDate, double? price}) async {
+    try {
+      http.Response response = await http.post(drugsUri,
+          body: jsonEncode({
+            "name": name,
+            "gram": gram,
+            "expiry_date": expireDate,
+            "price": price
+          }),
+          headers: {
+            'content-type': 'application/json; charset=UTF-8',
+            'Authorization': "Token ${sharedPreferences.getString('token')}"
+          });
+      if (response.statusCode == 201) {
+        Get.showSnackbar(Constants.customSnackBar(
+            tag: true, message: "Drug Successfully Added"));
+      } else {
+        print(response.body);
+        throw Exception(response.reasonPhrase);
+      }
+    } catch (e) {
+      Get.showSnackbar(Constants.customSnackBar(tag: false, message: "$e"));
+    }
+    return null;
+  }
+
+  static Future<DrugsResponse?> updateDrug(
+      {String? id,
+      String? name,
+      double? gram,
+      String? expireDate,
+      double? price}) async {
+    try {
+      http.Response response = await http.put(
+          Uri.parse("$baseUrl/core/drugs/$id/"),
+          body: jsonEncode({
+            "name": name,
+            "gram": gram,
+            "expiry_date": expireDate,
+            "price": price
+          }),
+          headers: {
+            'content-type': 'application/json; charset=UTF-8',
+            'Authorization': "Token ${sharedPreferences.getString('token')}"
+          });
+      if (response.statusCode == 200) {
+        Get.showSnackbar(
+            Constants.customSnackBar(tag: true, message: "Drug Updated"));
+        Get.close(2);
+      } else {}
+    } catch (e) {}
+  }
+
   static Future<PrescriptionCreateResponse?> prescribeDrugs(
       {required List<Map<String, dynamic>>? drugsPrescribe,
       required String patient,

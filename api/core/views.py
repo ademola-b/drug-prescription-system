@@ -18,7 +18,7 @@ from . serializers import (DrugSerializer, PrescriptionSerializer, DrugPrescribe
                            PaymentStatusUpdateSerializer)
 # Create your views here.
 
-class DrugsView(ListCreateAPIView, RetrieveUpdateDestroyAPIView):
+class DrugsView(ListCreateAPIView):
     queryset = Drug.objects.all()
     serializer_class = DrugSerializer
     permission_classes = [IsAuthenticated]

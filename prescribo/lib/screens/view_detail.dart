@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:prescribo/utils/constants.dart';
 import 'package:prescribo/utils/defaultButton.dart';
 import 'package:prescribo/utils/defaultText.dart';
@@ -117,7 +118,7 @@ class ViewPatientDetail extends StatelessWidget {
                     color: Constants.secondaryColor,
                   ),
                   DefaultText(
-                    text: "${data['patient'].dob}",
+                    text: DateFormat("dd-MM-yyyy").format(data['patient'].dob),
                     size: 20.0,
                     color: Constants.secondaryColor,
                   ),

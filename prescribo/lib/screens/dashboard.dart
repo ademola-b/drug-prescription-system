@@ -256,19 +256,19 @@ class DoctorWidget extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 40.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                DefaultGesture(
-                  svgAsset: "assets/images/treatment_list.svg",
-                  tag: "Reports",
-                  func: () {
-                    Get.toNamed('/report');
-                  },
-                ),
-              ],
-            ),
+            // const SizedBox(height: 40.0),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //   children: [
+            //     DefaultGesture(
+            //       svgAsset: "assets/images/treatment_list.svg",
+            //       tag: "Reports",
+            //       func: () {
+            //         Get.toNamed('/report');
+            //       },
+            //     ),
+            //   ],
+            // ),
             const SizedBox(height: 50.0),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
