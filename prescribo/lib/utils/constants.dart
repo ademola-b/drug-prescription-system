@@ -138,6 +138,7 @@ class Constants {
       if (!isValid) return;
       _form.currentState!.save();
 
+      controller.isClicked.value = true;
       await RemoteServices.updateDrug(
           id: id,
           name: _name,
@@ -213,7 +214,7 @@ class Constants {
                       const SizedBox(height: 20.0),
                       SizedBox(
                         width: size.width,
-                        child: DefaultButton(
+                        child: Obx(() => DefaultButton(
                             onPressed: () {
                               // controller.isClicked.value = true;
                               updateDrug(drugId);
@@ -226,7 +227,7 @@ class Constants {
                             //   text: "Update Drug",
                             //   size: 18.0,
                             // )
-                            ),
+                            )),
                       )
                     ],
                   ),
