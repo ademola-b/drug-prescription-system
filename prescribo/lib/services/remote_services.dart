@@ -244,7 +244,12 @@ class RemoteServices {
         Get.showSnackbar(
             Constants.customSnackBar(tag: true, message: "Drug Updated"));
         Get.close(2);
-      } else {}
+      } else {
+        Get.showSnackbar(
+            Constants.customSnackBar(tag: true, message: response.body));
+
+        print(response.body);
+      }
     } catch (e) {}
   }
 

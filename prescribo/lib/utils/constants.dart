@@ -145,7 +145,7 @@ class Constants {
           gram: double.parse(_gram),
           expireDate: _expiryDate);
 
-      print("Data collected: $_name, $_expiryDate");
+      // print("Data collected: $_name, $_expiryDate");
     }
 
     showModalBottomSheet(
@@ -219,10 +219,14 @@ class Constants {
                               updateDrug(drugId);
                             },
                             textSize: 18,
-                            child: const DefaultText(
-                              text: "Update Drug",
-                              size: 18.0,
-                            )),
+                            child: Constants.loadingCirc(
+                                "Update Drug", controller.isClicked.value)
+
+                            // const DefaultText(
+                            //   text: "Update Drug",
+                            //   size: 18.0,
+                            // )
+                            ),
                       )
                     ],
                   ),

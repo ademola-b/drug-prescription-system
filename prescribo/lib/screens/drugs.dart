@@ -148,13 +148,20 @@ class Drugs extends StatelessWidget {
                                             const SizedBox(height: 20.0),
                                             SizedBox(
                                               width: size.width,
-                                              child: DefaultButton(
-                                                  onPressed: () {
-                                                    _addDrug();
-                                                  },
-                                                  textSize: 18,
-                                                  child: const DefaultText(
-                                                    text: "Submit",
+                                              child: Obx(() => DefaultButton(
+                                                    onPressed: () {
+                                                      _addDrug();
+                                                    },
+                                                    textSize: 18,
+                                                    child:
+                                                        Constants.loadingCirc(
+                                                            "Submit",
+                                                            controller.isClicked
+                                                                .value),
+
+                                                    // const DefaultText(
+                                                    //   text: "Submit",
+                                                    // )
                                                   )),
                                             )
                                           ],
@@ -196,7 +203,7 @@ class Drugs extends StatelessWidget {
                                       "${data[index].name}",
                                       "${data[index].price}",
                                       "${data[index].gram}",
-                                      DateFormat("dd-MM-yyyy")
+                                      DateFormat("yyyy-MM-dd")
                                           .format(data[index].expiryDate!),
                                       context);
                                 },
